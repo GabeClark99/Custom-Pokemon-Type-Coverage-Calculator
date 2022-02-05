@@ -1,52 +1,24 @@
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Pokemon {
-    private String name;
-    private int primaryType;
-    private int secondaryType;
-	private Set<Integer> weaknesses;
-	private Set<Integer> resistances;
-	private Set<Integer> immunities;
+    public String name;
+	public ArrayList<String> types;
+	public Set<String> weaknesses;
+	public Set<String> resistances;
+	public Set<String> immunities;
 
-    public void setName(String newName) { this.name = newName; return; }
-    public String getName() { return this.name; }
-
-    public void setPrimaryType(int newPrimaryType) {
-		this.primaryType = newPrimaryType;
-		return;
-	}
-	public void setSecondaryType(int newSecondaryType) {
-		this.secondaryType = newSecondaryType;
-		return;
+	public Pokemon(String name, ArrayList<String> types, 
+		Set<String> weaknesses, Set<String> resistances, Set<String> immunities) {
+			this.name = name;
+			this.types = types;
+			this.weaknesses = weaknesses;
+			this.resistances = resistances;
+			this.immunities = immunities;
+			return;
 	}
 
-    public int getPrimaryType() {
-		return this.primaryType;
-	}
-    public int getSecondaryType() {
-		return this.secondaryType;
-	}
-
-	public void addWeakness(int newWeakness) {
-		this.weaknesses.add(newWeakness);
-		return;
-	}
-	public void addResistance(int newResistance) {
-		this.resistances.add(newResistance);
-		return;
-	}
-	public void addImmunity(int newImmunity) {
-		this.immunities.add(newImmunity);
-		return;
-	}
-
-	public boolean isWeakness(int type) {
-		return this.weaknesses.contains(type);
-	}
-	public boolean isResistance(int type) {
-		return this.resistances.contains(type);
-	}
-	public boolean isImmunity(int type) {
-		return this.immunities.contains(type);
-	}
+	public boolean isWeakness(String type) { return this.weaknesses.contains(type); }
+	public boolean isResistance(String type) { return this.resistances.contains(type); }
+	public boolean isImmunity(String type) { return this.immunities.contains(type); }
 }
