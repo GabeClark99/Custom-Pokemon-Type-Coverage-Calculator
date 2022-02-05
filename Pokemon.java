@@ -21,4 +21,13 @@ public class Pokemon {
 	public boolean isWeakness(String type) { return this.weaknesses.contains(type); }
 	public boolean isResistance(String type) { return this.resistances.contains(type); }
 	public boolean isImmunity(String type) { return this.immunities.contains(type); }
+
+	public String getInfo() {
+		String info = '\t' + name + ' ';
+		for(int j = 0; j < types.size(); ++j) {
+			info += types.get(j) + ' ';
+		}
+
+		return info;
+	}
 }

@@ -33,7 +33,7 @@ public class PokemonDatabase {
 	};
 	private static final HashMap<Integer, String> INDEX2TYPE_MAP = new HashMap<Integer, String>();
 	private static final HashMap<String, Integer> TYPE2INDEX_MAP = new HashMap<String, Integer>();
-	private static ArrayList<Pokemon> pokemonSet = new ArrayList<Pokemon>();
+	private static ArrayList<Pokemon> pokemonList = new ArrayList<Pokemon>();
 	
 	public static void init() {
 		initMaps();
@@ -90,11 +90,11 @@ public class PokemonDatabase {
 
 			while(fileIn.hasNextLine()) {
 				String line = fileIn.nextLine();
-				System.out.println(line);	//-----dbg!!!
+				// System.out.println(line);	//-----dbg!!!
 				Pokemon p = PokemonDatabase.getPokemonFromText(line);
-				PokemonDatabase.pokemonSet.add(p);
+				PokemonDatabase.pokemonList.add(p);
 
-				displayPokemonTypeStuff(p);	//-----dbg!!!
+				// displayPokemonTypeStuff(p);	//-----dbg!!!
 			}
 
 			fileIn.close();
@@ -160,4 +160,6 @@ public class PokemonDatabase {
 		System.out.println("\timmunities: " + p.immunities);
 		return;
 	}
+
+	public static ArrayList<Pokemon> getFullPokemonList() { return pokemonList; }
 }
