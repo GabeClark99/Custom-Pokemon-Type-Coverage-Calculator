@@ -11,6 +11,8 @@ import java.util.TreeSet;
 public class PokemonDatabase {
 	private static final String FILE_NAME = "pokemon.txt";
 	private static final int NUM_TYPES = 18;
+	public static final String[] TYPES = {"NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", "ICE", "FIGHTING", "POISON", 
+		"GROUND", "FLYING", "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON", "DARK", "STEEL", "FAIRY"};
 	private static final double[][] TYPE_TABLE = {
 		{1,		1,		1,		1,		1,		1,		1,		1,		1,		1,		1,		1,		0.5,	0,		1,		1,		0.5,	1},
 		{1,		0.5,	0.5,	1,		2,		2,		1,		1,		1,		1,		1,		2,		0.5,	1,		0.5,	1,		2,		1},

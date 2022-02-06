@@ -1,27 +1,17 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Calculator {
 
     public static void main(String[] args) {
         Calculator.init();
-		String[] attackingTypes = getAttackingTypes();
-		ArrayList<Pokemon> pokemonList = PokemonDatabase.getFullPokemonList();
-
-		ArrayList<Pokemon> superEffective = new ArrayList<Pokemon>();
-		ArrayList<Pokemon> neutral = new ArrayList<Pokemon>();
-		ArrayList<Pokemon> notVeryEffective = new ArrayList<Pokemon>();
-		ArrayList<Pokemon> noEffect = pokemonList;
-
-		ArrayList<ArrayList<Pokemon>> categories = new ArrayList<ArrayList<Pokemon>>();
-		categories.add(superEffective);
-		categories.add(neutral);
-		categories.add(notVeryEffective);
-		categories.add(noEffect);
-
-		ArrayList<ArrayList<Pokemon>> results = calculateResults(attackingTypes, attackingTypes.length, categories);
-
-		displayResults(results);
+		
+		ArrayList<ArrayList<String>> combs = findMinimumOptimalTypeCombinations();
+		for(int i = 0; i < combs.size(); ++i) {
+			ArrayList<String> curComb = combs.get(i);
+			System.out.println("Minimum Optimal Combination #" + i + ": " + curComb);
+		}
 
 		return;
     }
@@ -30,7 +20,17 @@ public class Calculator {
 		PokemonDatabase.init();
 	}
 
-	private static String[] getAttackingTypes() {
+	private static ArrayList<ArrayList<Pokemon>> calcEffectiveness(String[] attackingTypes) {
+		ArrayList<ArrayList<Pokemon>> categories = new ArrayList<ArrayList<Pokemon>>();
+		categories.add(new ArrayList<Pokemon>());				// superEffective category
+		categories.add(new ArrayList<Pokemon>());				// neutral category
+		categories.add(new ArrayList<Pokemon>());				// not very effective category
+		categories.add(PokemonDatabase.getFullPokemonList());	// no effect category
+
+		return categorize(attackingTypes, attackingTypes.length, categories);
+	}
+
+	private static String[] getAttackingTypesFromUser() {
 		Scanner userInput = new Scanner(System.in);
 
 		System.out.println("Enter your attacking types, all caps, space delimited:");
@@ -78,7 +78,7 @@ public class Calculator {
 		return results;
 	}*/
 
-	private static ArrayList<ArrayList<Pokemon>> calculateResults(String[] attackingTypes, int numAttackingTypes, ArrayList<ArrayList<Pokemon>> categories) {
+	private static ArrayList<ArrayList<Pokemon>> categorize(String[] attackingTypes, int numAttackingTypes, ArrayList<ArrayList<Pokemon>> categories) {
 		// System.out.println("!!!top of calculateResults"); // -----dbg!!!
 		if(numAttackingTypes < 1) {
 			// System.out.println("!!!returning, numAttackingTypes = " + numAttackingTypes); // -----dbg!!!
@@ -89,7 +89,7 @@ public class Calculator {
 		// System.out.println("!!!curType = " + curType);	//-----dbg!!!
 
 		// System.out.println("!!!entering next recursion...\n"); // -----dbg!!!
-		ArrayList<ArrayList<Pokemon>> oldCategories = calculateResults(attackingTypes, numAttackingTypes - 1, categories);
+		ArrayList<ArrayList<Pokemon>> oldCategories = categorize(attackingTypes, numAttackingTypes - 1, categories);
 		// System.out.println("\n!!!returned from recursion"); // -----dbg!!!
 		// System.out.println("!!!curType = " + curType);	//-----dbg!!!
 
@@ -205,5 +205,54 @@ public class Calculator {
 
 			System.out.println(curPokemon.getInfo());
 		}*/
+	}
+
+	private static ArrayList<String[]> genCombinations(String[] options, int optionsToChoose, int startIndex, String[] combination, ArrayList<String[]> combinations) {
+		if(optionsToChoose == 0) {
+			combinations.add(combination.clone());
+			// System.out.println("!!! added combination: " + Arrays.toString(combination));	//-----dbg!!!
+			return combinations;
+		}
+
+		for(int i = startIndex; i < options.length - (optionsToChoose - 1); ++i) {
+			combination[combination.length - optionsToChoose] = options[i];
+			combinations = genCombinations(options, optionsToChoose - 1, i + 1, combination, combinations);
+		}
+
+		return combinations;
+	}
+
+	private static ArrayList<ArrayList<String>> findMinimumOptimalTypeCombinations() {
+		String[] types = PokemonDatabase.TYPES;
+		int bestSECount = 0;
+		ArrayList<ArrayList<String>> bestCombinations = new ArrayList<ArrayList<String>>();
+		bestCombinations.add(new ArrayList<String>(19));
+
+		for(int i = 0; i < types.length; ++i) {
+			int combLength = i + 1;
+			ArrayList<String[]> combinations = genCombinations(types, combLength, 0, new String[combLength], new ArrayList<String[]>());
+
+			for(int j = 0; j < combinations.size(); ++j) {
+				// System.out.println("!!! checking combination #" + i);	//-----dbg!!!
+				String[] curComb = combinations.get(j);
+				// System.out.println("!!! curComb = " + Arrays.toString(curComb));	//-----dbg!!!
+
+				ArrayList<ArrayList<Pokemon>> categories = calcEffectiveness(curComb);
+				int curCombSECount = categories.get(0).size();
+				// System.out.println("!!! curCombSECount = " + curCombSECount);	//-----dbg!!!
+
+				if(curCombSECount > bestSECount) {
+					bestSECount = curCombSECount;
+					// bestCombinations = new ArrayList<String>(Arrays.asList(curComb));
+					bestCombinations = new ArrayList<ArrayList<String>>();
+					bestCombinations.add(new ArrayList<String>(Arrays.asList(curComb)));
+				}
+				else if( curCombSECount == bestSECount && curComb.length == bestCombinations.get(0).size() ) {
+					bestCombinations.add(new ArrayList<String>(Arrays.asList(curComb)));
+				}
+			}
+		}
+
+		return bestCombinations;
 	}
 }
